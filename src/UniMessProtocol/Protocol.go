@@ -46,9 +46,10 @@ func (sm *StateMachine) Start() {
 			data := buf[:n]
 
 			outData := make([]byte, 2)
-			binary.LittleEndian.PutUint16(outData[0:], uint16(len(data)))
+			encodedData := sm.chain.EncodePacket(data)
+			binary.LittleEndian.PutUint16(outData[0:], uint16(len(encodedData)))
 
-			outData = append(outData, sm.chain.EncodePacket(data)...)
+			outData = append(outData, encodedData...)
 			_, err = sm.encodedConn.Write(outData)
 			if err != nil {
 				break
